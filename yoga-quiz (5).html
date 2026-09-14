@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your Class — Rory Penrose Yoga</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap');
+
+:root {
+  --bg: #0d0d0d;
+  --surface: #141414;
+  --border: rgba(255,255,255,0.08);
+  --text: #f2efe8;
+  --muted: rgba(242,239,232,0.45);
+  --activate: #c0392b;
+  --activate-light: rgba(192,57,43,0.15);
+  --restore: #2980b9;
+  --restore-light: rgba(41,128,185,0.15);
+  --gold: #c8a96e;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* SCREENS */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* INTRO */
+#intro {
+  justify-content: center;
+  align-items: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+.intro-eyebrow {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.intro-title {
+  font-family: var(--serif);
+  font-size: clamp(42px, 8vw, 72px);
+  font-weight: 300;
+  line-height: 1.0;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+.intro-title em { font-style: italic; color: var(--gold); }
+.intro-sub {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--muted);
+  max-width: 36ch;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+.btn-start {
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  padding: 16px 40px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: opacity 0.2s;
+}
+.btn-start:hover { opacity: 0.85; }
+
+/* QUIZ */
+#quiz { padding: 0; }
+.quiz-header {
+  padding: 24px 32px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 20px;
+}
+.quiz-logo {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+}
+.quiz-progress {
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+.progress-bar-wrap {
+  height: 2px;
+  background: var(--border);
+  width: 100%;
+}
+.progress-bar {
+  height: 2px;
+  background: var(--gold);
+  transition: width 0.4s ease;
+}
+
+.question-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 32px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+.question-number {
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  margin-bottom: 16px;
+}
+.question-text {
+  font-family: var(--serif);
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 300;
+  line-height: 1.2;
+  margin-bottom: 36px;
+  letter-spacing: -0.01em;
+}
+.question-text em { font-style: italic; color: var(--gold); }
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.option {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 18px 22px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  text-align: left;
+}
+.option:hover { border-color: var(--gold); background: rgba(200,169,110,0.05); }
+.option.selected { border-color: var(--gold); background: rgba(200,169,110,0.08); }
+.option-indicator {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.option.selected .option-indicator {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+.option.selected .option-indicator::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--bg);
+  border-radius: 50%;
+}
+.option-text {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--text);
+}
+.option-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+
+.quiz-nav {
+  padding: 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+.btn-nav {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 12px 28px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  letter-spacing: 0.06em;
+}
+.btn-nav:hover { border-color: var(--muted); color: var(--text); }
+.btn-next {
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  padding: 12px 32px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 2px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: opacity 0.2s;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.btn-next.enabled { opacity: 1; pointer-events: all; }
+.btn-next.enabled:hover { opacity: 0.85; }
+
+/* EMAIL GATE */
+#email-gate {
+  justify-content: center;
+  align-items: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+.gate-title {
+  font-family: var(--serif);
+  font-size: clamp(32px, 6vw, 52px);
+  font-weight: 300;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+.gate-title em { font-style: italic; color: var(--gold); }
+.gate-sub {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  max-width: 34ch;
+  margin: 0 auto 32px;
+  line-height: 1.7;
+}
+.email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 360px;
+  margin: 0 auto;
+}
+.email-form input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 14px 18px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.email-form input::placeholder { color: var(--muted); }
+.email-form input:focus { border-color: var(--gold); }
+.btn-reveal {
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  padding: 14px 32px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: opacity 0.2s;
+}
+.btn-reveal:hover { opacity: 0.85; }
+.privacy-note {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+/* RESULTS */
+#results {
+  padding: 0;
+  align-items: stretch;
+}
+.results-hero {
+  padding: 48px 32px 36px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.results-eyebrow {
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.results-title {
+  font-family: var(--serif);
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.primary-class {
+  font-family: var(--serif);
+  font-size: clamp(36px, 7vw, 60px);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.primary-class.activate { color: var(--activate); }
+.primary-class.restore { color: var(--restore); }
+.primary-class.both { background: linear-gradient(90deg, var(--activate), var(--restore)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.results-sub {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  max-width: 44ch;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* CONTINUUM BAR */
+.continuum-section {
+  padding: 36px 32px;
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+}
+.continuum-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.continuum-label span {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.continuum-label .act { color: var(--activate); }
+.continuum-label .res { color: var(--restore); }
+.continuum-track {
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--activate), var(--restore));
+  position: relative;
+  margin-bottom: 8px;
+}
+.continuum-marker {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 18px;
+  height: 18px;
+  background: var(--text);
+  border-radius: 50%;
+  border: 3px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--gold);
+  transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* SPIDER DIAGRAM */
+.spider-section {
+  padding: 0 32px 36px;
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+}
+.spider-title {
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.spider-wrap {
+  display: flex;
+  justify-content: center;
+}
+canvas#spiderCanvas {
+  max-width: 100%;
+}
+
+/* CLASS CARDS */
+.class-cards {
+  padding: 0 32px 36px;
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.class-card {
+  border-radius: 4px;
+  padding: 24px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.class-card.activate {
+  background: var(--activate-light);
+  border: 1px solid rgba(192,57,43,0.3);
+}
+.class-card.restore {
+  background: var(--restore-light);
+  border: 1px solid rgba(41,128,185,0.3);
+}
+.class-card.primary::after {
+  content: 'Your priority';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 100px;
+  background: rgba(200,169,110,0.2);
+  color: var(--gold);
+}
+.card-day {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.class-card.activate .card-day { color: var(--activate); }
+.class-card.restore .card-day { color: var(--restore); }
+.card-name {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.card-time {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.card-desc {
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(242,239,232,0.65);
+  line-height: 1.6;
+}
+
+/* CTA */
+.results-cta {
+  padding: 0 32px 48px;
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+  text-align: center;
+}
+.cta-note {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.btn-book {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--bg);
+  text-decoration: none;
+  padding: 16px 40px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: opacity 0.2s;
+  margin-bottom: 10px;
+}
+.btn-book:hover { opacity: 0.85; }
+.free-note {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 480px) {
+  .class-cards { grid-template-columns: 1fr; }
+  .question-wrap { padding: 32px 20px; }
+  .quiz-nav { padding: 20px; }
+  .quiz-header { padding: 20px 20px 16px; }
+  .continuum-section, .spider-section, .class-cards, .results-cta { padding-left: 20px; padding-right: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro" class="screen active">
+  <p class="intro-eyebrow">Rory Penrose · Surbiton HC</p>
+  <h1 class="intro-title">Find your<br><em>class.</em></h1>
+  <p class="intro-sub">Five questions to discover whether you need to Activate, Restore, or both — and which class to prioritise first.</p>
+  <button class="btn-start" onclick="startQuiz()">Start the quiz</button>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <div class="quiz-logo">Rory Penrose</div>
+    <div class="quiz-progress" id="progressText">1 of 5</div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar" style="width: 20%"></div>
+  </div>
+
+  <div class="question-wrap" id="questionWrap">
+    <!-- injected by JS -->
+  </div>
+
+  <div class="quiz-nav" style="max-width:600px;margin:0 auto;width:100%;padding:24px 32px;">
+    <button class="btn-nav" id="btnBack" onclick="prevQuestion()" style="visibility:hidden">Back</button>
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()">Next</button>
+  </div>
+</div>
+
+<!-- EMAIL GATE -->
+<div id="email-gate" class="screen">
+  <h2 class="gate-title">Your results<br>are <em>ready.</em></h2>
+  <p class="gate-sub">Enter your details to unlock your personalised recommendation. Rory will be in touch shortly to confirm everything you need before your first class.</p>
+  <div class="email-form">
+    <input type="text" id="gateName" placeholder="Your first name" />
+    <input type="email" id="gateEmail" placeholder="Your email address" />
+    <button class="btn-reveal" onclick="submitEmail()">Reveal my results</button>
+    <p class="privacy-note">Your details go directly to Rory. No spam, no third parties, ever.</p>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="screen">
+  <div class="results-hero">
+    <p class="results-eyebrow">Your recommendation</p>
+    <p class="results-title">You need</p>
+    <p class="primary-class" id="primaryClassName"></p>
+    <p class="results-sub" id="resultsSub"></p>
+  </div>
+
+  <div class="continuum-section">
+    <div class="continuum-label">
+      <span class="act">Activate</span>
+      <span class="res">Restore</span>
+    </div>
+    <div class="continuum-track">
+      <div class="continuum-marker" id="continuumMarker"></div>
+    </div>
+  </div>
+
+  <div class="spider-section">
+    <p class="spider-title">Your profile</p>
+    <div class="spider-wrap">
+      <canvas id="spiderCanvas" width="320" height="320"></canvas>
+    </div>
+  </div>
+
+  <div class="class-cards" id="classCards"></div>
+
+  <div class="results-cta">
+    <p class="cta-note" id="ctaNote"></p>
+
+    <div style="background:rgba(200,169,110,0.06);border:1px solid rgba(200,169,110,0.15);border-radius:4px;padding:16px 20px;margin-bottom:16px;text-align:left;">
+      <p style="font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:0;">Choose your plan</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+
+      <div style="background:rgba(200,169,110,0.08);border:1px solid rgba(200,169,110,0.2);border-radius:4px;padding:20px 20px;text-align:left;">
+        <p style="font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Monthly membership — £50/month</p>
+        <p style="font-size:13px;font-weight:300;color:rgba(242,239,232,0.7);line-height:1.7;margin-bottom:6px;">Up to 8 classes a month. Best value.</p>
+        <p style="font-size:13px;font-weight:300;color:rgba(242,239,232,0.7);line-height:1.7;margin-bottom:6px;">First class completely free.</p>
+        <p style="font-size:13px;font-weight:300;color:rgba(242,239,232,0.7);line-height:1.7;margin-bottom:6px;">No booking needed. Just show up.</p>
+        <p style="font-size:13px;font-weight:300;color:rgba(242,239,232,0.7);line-height:1.7;margin-bottom:6px;">Cancel anytime.</p>
+        <p style="font-size:11px;font-weight:500;color:var(--gold);letter-spacing:0.08em;margin-top:4px;">Use code NEWMONTH at checkout</p>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:20px 20px;text-align:left;">
+        <p style="font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:rgba(242,239,232,0.4);margin-bottom:12px;">Drop in — £12 per class</p>
+        <p style="font-size:13px;font-weight:300;color:rgba(242,239,232,0.7);line-height:1.7;margin-bottom:6px;">Pay as you go. No commitment.</p>
+        <p style="font-size:13px;font-weight:300;color:rgba(242,239,232,0.7);line-height:1.7;margin-bottom:6px;">First class completely free.</p>
+        <p style="font-size:13px;font-weight:300;color:rgba(242,239,232,0.7);line-height:1.7;margin-bottom:6px;">No booking needed. Just show up.</p>
+        <p style="font-size:13px;font-weight:300;color:rgba(242,239,232,0.7);line-height:1.7;margin-bottom:6px;">Rory is always there. Every Monday and Wednesday without fail.</p>
+        <p style="font-size:11px;font-weight:500;color:rgba(242,239,232,0.4);letter-spacing:0.08em;margin-top:4px;">Use code NEWCLASS at checkout</p>
+      </div>
+
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <a href="https://buy.stripe.com/00w5kCgEy9DD3UE5Bb9Ve05" target="_blank" class="btn-book" style="text-align:center;padding:14px 16px;font-size:11px;">Start monthly — £50/month</a>
+      <a href="https://buy.stripe.com/dRm3cu5ZUdTTaj26Ff9Ve07" target="_blank" class="btn-book" style="text-align:center;padding:14px 16px;font-size:11px;background:transparent;border:1px solid var(--gold);color:var(--gold);">Drop in — £12/class</a>
+    </div>
+    <span class="free-note">First class free on both plans. No booking needed. Just show up. Classes capped at 15.</span>
+
+    <p style="font-size:12px;font-weight:300;color:rgba(242,239,232,0.35);margin-top:16px;line-height:1.6;">Surbiton Hockey Club · Monday 11:15am · Wednesday 8pm</p>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    id: 'nervous',
+    text: 'How does your nervous system feel most of the time?',
+    dimension: 'nervous',
+    options: [
+      { text: 'Wired and switched on', sub: 'Hard to switch off, always running', activateScore: 0, restoreScore: 10 },
+      { text: 'Generally balanced', sub: 'Some stress but mostly manageable', activateScore: 5, restoreScore: 5 },
+      { text: 'Low energy and flat', sub: 'Need more activation and drive', activateScore: 10, restoreScore: 0 },
+    ]
+  },
+  {
+    id: 'mobility',
+    text: 'Where do you feel most restricted in your body?',
+    dimension: 'mobility',
+    options: [
+      { text: 'Tight hips and lower back', sub: 'Classic hockey player tightness', activateScore: 8, restoreScore: 5 },
+      { text: 'Stiff thoracic spine and shoulders', sub: 'Upper body restricted', activateScore: 10, restoreScore: 3 },
+      { text: 'Generally stiff everywhere', sub: 'The whole body needs work', activateScore: 6, restoreScore: 8 },
+    ]
+  },
+  {
+    id: 'strength',
+    text: 'What best describes your training right now?',
+    dimension: 'strength',
+    options: [
+      { text: 'Heavy training, running on empty', sub: 'High output, low recovery', activateScore: 2, restoreScore: 10 },
+      { text: 'Moderate and consistent', sub: 'Balanced but could do more', activateScore: 6, restoreScore: 4 },
+      { text: 'Building back up', sub: 'Coming back from a break or injury', activateScore: 9, restoreScore: 3 },
+    ]
+  },
+  {
+    id: 'balance',
+    text: 'How would you describe your mind going into a match or big moment?',
+    dimension: 'balance',
+    options: [
+      { text: 'Anxious and overthinking', sub: 'Hard to stay present', activateScore: 2, restoreScore: 10 },
+      { text: 'Focused but tight', sub: 'Sharp but could be calmer', activateScore: 5, restoreScore: 6 },
+      { text: 'Flat and hard to get up for it', sub: 'Need more activation energy', activateScore: 10, restoreScore: 2 },
+    ]
+  },
+  {
+    id: 'intention',
+    text: 'What are you looking for most from yoga right now?',
+    dimension: 'intention',
+    options: [
+      { text: 'More physical — strength, mobility, power', sub: 'The body needs the work', activateScore: 10, restoreScore: 2 },
+      { text: 'More mental — calm, presence, clarity', sub: 'The mind needs the work', activateScore: 2, restoreScore: 10 },
+      { text: 'Both equally', sub: 'Looking for the complete practice', activateScore: 6, restoreScore: 6 },
+    ]
+  }
+];
+
+let current = 0;
+let answers = {};
+let scores = { activate: 0, restore: 0 };
+let dimensionScores = {};
+
+function startQuiz() {
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  const wrap = document.getElementById('questionWrap');
+  const selected = answers[q.id];
+
+  wrap.innerHTML = `
+    <p class="question-number">${current + 1} of ${questions.length}</p>
+    <h2 class="question-text">${q.text}</h2>
+    <div class="options">
+      ${q.options.map((o, i) => `
+        <div class="option ${selected === i ? 'selected' : ''}" onclick="selectOption(${i})">
+          <div class="option-indicator"></div>
+          <div>
+            <div class="option-text">${o.text}</div>
+            <div class="option-label">${o.sub}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  document.getElementById('progressText').textContent = `${current + 1} of ${questions.length}`;
+  document.getElementById('progressBar').style.width = `${((current + 1) / questions.length) * 100}%`;
+  document.getElementById('btnBack').style.visibility = current > 0 ? 'visible' : 'hidden';
+
+  const next = document.getElementById('btnNext');
+  if (selected !== undefined) {
+    next.classList.add('enabled');
+    next.textContent = current === questions.length - 1 ? 'See my results' : 'Next';
+  } else {
+    next.classList.remove('enabled');
+    next.textContent = current === questions.length - 1 ? 'See my results' : 'Next';
+  }
+}
+
+function selectOption(index) {
+  answers[questions[current].id] = index;
+  renderQuestion();
+}
+
+function nextQuestion() {
+  if (answers[questions[current].id] === undefined) return;
+  if (current < questions.length - 1) {
+    current++;
+    renderQuestion();
+  } else {
+    calculateScores();
+    showScreen('email-gate');
+  }
+}
+
+function prevQuestion() {
+  if (current > 0) { current--; renderQuestion(); }
+}
+
+function calculateScores() {
+  scores = { activate: 0, restore: 0 };
+  dimensionScores = {};
+  questions.forEach(q => {
+    const idx = answers[q.id];
+    if (idx !== undefined) {
+      const opt = q.options[idx];
+      scores.activate += opt.activateScore;
+      scores.restore += opt.restoreScore;
+      dimensionScores[q.dimension] = {
+        activate: opt.activateScore,
+        restore: opt.restoreScore
+      };
+    }
+  });
+}
+
+function submitEmail() {
+  const name = document.getElementById('gateName').value.trim();
+  const email = document.getElementById('gateEmail').value.trim();
+  if (!email || !email.includes('@')) {
+    alert('Please enter a valid email address.');
+    return;
+  }
+
+  // Submit to Google Form via hidden iframe (same method as Optima quiz)
+  try {
+    const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSc2Wv9cNnuKzRRn1dQejeeZ6ormEtLIgsuUtTi-OJIBQK4LSg/formResponse';
+
+    const iframe = document.createElement('iframe');
+    iframe.name = 'hidden_yoga_iframe';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = FORM_URL;
+    form.target = 'hidden_yoga_iframe';
+    form.style.display = 'none';
+
+    const fields = {
+      'entry.1959769641': name,
+      'entry.1786098232': email
+    };
+
+    Object.keys(fields).forEach(key => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = fields[key];
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+
+    setTimeout(() => {
+      try { document.body.removeChild(form); document.body.removeChild(iframe); } catch(e) {}
+    }, 3000);
+  } catch(e) {}
+
+  showResults(name);
+}
+
+function showResults(name) {
+  showScreen('results');
+
+  const total = scores.activate + scores.restore;
+  const activatePct = scores.activate / total;
+  const restorePct = scores.restore / total;
+  const diff = Math.abs(activatePct - restorePct);
+
+  let primaryClass, primaryColor, subText, ctaText;
+
+  if (diff < 0.1) {
+    primaryClass = 'both';
+    document.getElementById('primaryClassName').textContent = 'Both classes.';
+    document.getElementById('primaryClassName').className = 'primary-class both';
+    subText = `${name ? name + ', you' : 'You'} are sitting right in the middle. Your body and mind need both activation and restoration in equal measure. Attend both classes and you will notice the difference within two weeks.`;
+    ctaText = 'Both classes complement each other. Start with whichever day works this week. Your first class is free. Rory will be in touch shortly to confirm your spot, share the timings, and let you know everything you need before you arrive.';
+  } else if (activatePct > restorePct) {
+    primaryClass = 'activate';
+    document.getElementById('primaryClassName').textContent = 'Activate.';
+    document.getElementById('primaryClassName').className = 'primary-class activate';
+    subText = `${name ? name + ', your' : 'Your'} body is asking to be woken up and moved with purpose. The Monday Activate class is your priority — dynamic vinyasa to build strength, open the hips, and start your week feeling genuinely good.`;
+    ctaText = 'Monday Activate is your priority. Your first class is free. Rory will be in touch shortly to confirm your spot, share the timings, and let you know everything you need before you arrive.';
+  } else {
+    primaryClass = 'restore';
+    document.getElementById('primaryClassName').textContent = 'Restore.';
+    document.getElementById('primaryClassName').className = 'primary-class restore';
+    subText = `${name ? name + ', your' : 'Your'} nervous system is running hot and your body needs to be brought back down. The Wednesday Reset class is your priority — restorative hatha to decompress, release, and actually switch off.`;
+    ctaText = 'Wednesday Reset is your priority. Your first class is free. Rory will be in touch shortly to confirm your spot, share the timings, and let you know everything you need before you arrive.';
+  }
+
+  document.getElementById('resultsSub').textContent = subText;
+  document.getElementById('ctaNote').textContent = ctaText;
+
+  // Continuum marker position (0% = full activate, 100% = full restore)
+  const markerPos = restorePct * 100;
+  setTimeout(() => {
+    document.getElementById('continuumMarker').style.left = markerPos + '%';
+  }, 200);
+
+  // Class cards
+  const isPrimaryActivate = primaryClass === 'activate' || primaryClass === 'both';
+  const isPrimaryRestore = primaryClass === 'restore' || primaryClass === 'both';
+  document.getElementById('classCards').innerHTML = `
+    <div class="class-card activate ${isPrimaryActivate ? 'primary' : ''}">
+      <div class="card-day">Monday morning</div>
+      <div class="card-name">Activate</div>
+      <div class="card-time">11:15 — 12:15pm</div>
+      <div class="card-desc">Dynamic vinyasa flow. Strength, flexibility, and energy to start the week right.</div>
+    </div>
+    <div class="class-card restore ${isPrimaryRestore ? 'primary' : ''}">
+      <div class="card-day">Wednesday evening</div>
+      <div class="card-name">Restore</div>
+      <div class="card-time">8:00 — 9:00pm</div>
+      <div class="card-desc">Restorative hatha. Decompress the body, quiet the mind, and actually switch off.</div>
+    </div>
+  `;
+
+  // Spider diagram
+  drawSpider();
+}
+
+function drawSpider() {
+  const canvas = document.getElementById('spiderCanvas');
+  const ctx = canvas.getContext('2d');
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  const radius = 110;
+  const dims = ['nervous', 'mobility', 'strength', 'balance', 'intention'];
+  const labels = ['Nervous\nsystem', 'Mobility', 'Strength', 'Focus', 'Intention'];
+  const n = dims.length;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Grid rings
+  for (let r = 1; r <= 5; r++) {
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+      const x = cx + (radius * r / 5) * Math.cos(angle);
+      const y = cy + (radius * r / 5) * Math.sin(angle);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Axes
+  for (let i = 0; i < n; i++) {
+    const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Activate polygon
+  ctx.beginPath();
+  dims.forEach((dim, i) => {
+    const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+    const val = dimensionScores[dim] ? dimensionScores[dim].activate / 10 : 0;
+    const x = cx + radius * val * Math.cos(angle);
+    const y = cy + radius * val * Math.sin(angle);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(192,57,43,0.2)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(192,57,43,0.7)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Restore polygon
+  ctx.beginPath();
+  dims.forEach((dim, i) => {
+    const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+    const val = dimensionScores[dim] ? dimensionScores[dim].restore / 10 : 0;
+    const x = cx + radius * val * Math.cos(angle);
+    const y = cy + radius * val * Math.sin(angle);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(41,128,185,0.2)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(41,128,185,0.7)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Labels
+  ctx.font = '11px Inter, sans-serif';
+  ctx.fillStyle = 'rgba(242,239,232,0.55)';
+  ctx.textAlign = 'center';
+  labels.forEach((label, i) => {
+    const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+    const lx = cx + (radius + 24) * Math.cos(angle);
+    const ly = cy + (radius + 24) * Math.sin(angle);
+    const lines = label.split('\n');
+    lines.forEach((line, li) => {
+      ctx.fillText(line, lx, ly + li * 14 - ((lines.length - 1) * 7));
+    });
+  });
+
+  // Legend
+  ctx.font = '10px Inter, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(192,57,43,0.8)';
+  ctx.fillRect(10, canvas.height - 30, 10, 10);
+  ctx.fillStyle = 'rgba(242,239,232,0.5)';
+  ctx.fillText('Activate', 26, canvas.height - 21);
+  ctx.fillStyle = 'rgba(41,128,185,0.8)';
+  ctx.fillRect(90, canvas.height - 30, 10, 10);
+  ctx.fillStyle = 'rgba(242,239,232,0.5)';
+  ctx.fillText('Restore', 106, canvas.height - 21);
+}
+</script>
+</body>
+</html>
